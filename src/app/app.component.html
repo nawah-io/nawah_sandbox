@@ -1,0 +1,119 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="./">Nawah Sandbox</a>
+</nav>
+
+<div class="container mt-2" style="height: calc(100vh - 60px); overflow: hidden;">
+  <div class="row mb-2">
+    <div class="col">
+      <ul ngbNav #toolsNav="ngbNav" [(activeId)]="toolsTabsActive" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Init</a>
+          <ng-template ngbNavContent>
+              <fieldset>
+                <label>API URI</label>
+                <input type="text" class="mx-1" [(ngModel)]="SDKConfig.api">
+              </fieldset>
+              <fieldset>
+                <label>API Anon Token</label>
+                <input type="text" class="mx-1" [(ngModel)]="SDKConfig.anonToken" (change)="updateAnonToken()">
+              </fieldset>
+              <fieldset>
+                <label>API Auth Attrs</label>
+                <input type="text" class="mx-1" (change)="updateAuthAttrs($event)">
+                <small><br>Separate attrs with single spaces only</small>
+              </fieldset>
+              <button (click)="init()">init()</button>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <a ngbNavLink>Auth</a>
+          <ng-template ngbNavContent>
+              <fieldset>
+                <label>Auth Var</label>
+                <select [(ngModel)]="authVars.var">
+                  <option *ngFor="let authVar of SDKConfig.authAttrs" [value]="authVar">{{authVar}}
+                  </option>
+                </select>
+              </fieldset>
+              <fieldset>
+                <label>Auth Val</label>
+                <input type="text" [(ngModel)]="authVars.val">
+              </fieldset>
+              <fieldset>
+                <label>Password</label>
+                <input type="text" [(ngModel)]="authVars.password">
+              </fieldset>
+              <button (click)="auth()">auth()</button>
+              <button (click)="checkAuth()">checkAuth()</button>
+              <button (click)="signout()">signout()</button>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="3">
+          <a ngbNavLink>Call</a>
+          <ng-template ngbNavContent>
+            <fieldset>
+              <label>Endpoint</label>
+              <input type="text" [(ngModel)]="callArgs.endpoint">
+            </fieldset>
+            <fieldset>
+              <label>SID</label>
+              <input type="text" [(ngModel)]="callArgs.sid">
+            </fieldset>
+            <fieldset>
+              <label>Token</label>
+              <input type="text" [(ngModel)]="callArgs.token">
+            </fieldset>
+            <fieldset>
+              <ul ngbNav #callNav="ngbNav" [(activeId)]="callTabsActive" class="nav-tabs">
+                <li [ngbNavItem]="1">
+                  <a ngbNavLink>Query</a>
+                  <ng-template ngbNavContent>
+                    <json-editor [options]="editorOptionsQuery" [(ngModel)]="callArgs.query"></json-editor>
+                  </ng-template>
+                </li>
+                <li [ngbNavItem]="2">
+                  <a ngbNavLink>Doc</a>
+                  <ng-template ngbNavContent>
+                    <json-editor [options]="editorOptionsDoc" [(ngModel)]="callArgs.doc" (change)="updateDocFiles()"></json-editor>
+                    <small><br>Doc attrs with "__file__" will generate file input, resets with every change to Doc object.</small>
+                    <fieldset *ngFor="let file of docFiles; let i = index">
+                      <label>File: {{ i }}</label>
+                      <input type="file" (change)="docFiles[i] = $event.target.files">
+                    </fieldset>
+                  </ng-template>
+                </li>
+              </ul>
+              <div [ngbNavOutlet]="callNav" class="mt-2"></div>
+            </fieldset>
+            <button (click)="call()">call()</button>
+          </ng-template>
+        </li>
+      </ul>
+      
+      <div [ngbNavOutlet]="toolsNav" class="mt-2"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <ul ngbNav #ConsoleNav="ngbNav" [(activeId)]="consoleTabsActive" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <a ngbNavLink>Console</a>
+          <ng-template ngbNavContent>
+            <ng-container *ngFor="let item of output">
+              <pre *ngIf="item.type == 'text'" style="white-space: pre-line; word-break: break-all;">
+                {{ item.value }}
+              </pre>
+              <json-editor *ngIf="item.type == 'json'" [options]="editorOptionsView" [data]="item.value"></json-editor>
+              <hr>
+            </ng-container>
+          </ng-template>
+        </li>
+        <li ngbNavItem class="ml-auto">
+          <a (click)="output = []">Clear</a>
+        </li>
+      </ul>
+
+      <div [ngbNavOutlet]="ConsoleNav" class="mt-2" style="max-height: 60vh; overflow: scroll;"></div>
+    </div>
+  </div>
+</div>
