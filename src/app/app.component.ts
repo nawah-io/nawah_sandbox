@@ -33,15 +33,15 @@ export class AppComponent implements OnInit {
 		api: environment.ws_api,
 		anonToken: environment.anon_token,
 		authAttrs: [],
-		appId: 'LIMP_SANDBOX',
+		appId: 'NAWAH_SANDBOX',
 		authHashLevel: '6.1',
 		debug: true
 	}
 
 	authVars: any = {
 		var: 'email',
-		val: 'ADMIN@LIMP.MASAAR.COM',
-		password: '__ADMIN',
+		val: 'ADMIN@NAWAH',
+		password: '__ADMINx0',
 		auth: null
 	};
 
@@ -67,9 +67,9 @@ export class AppComponent implements OnInit {
 
 	docFiles: Array<FileList> = [];
 
-	output: Array<{ type: 'text' | 'json'; value: any; }> = [];
+	output: Array<{ time: Date; type: 'text' | 'json'; value: any; }> = [];
 
-	constructor(private api: ApiService, private formBuilder: FormBuilder) {
+	constructor(public api: ApiService) {
 		this.editorOptionsView = new JsonEditorOptions()
 		this.editorOptionsView.modes = ['code', 'view'];
 		this.editorOptionsView.mode = 'view';
@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
 		this.editorOptionsDoc.statusBar = false;
 	}
 
-	ngOnInit() { }
+	ngOnInit() {console.log(this.api.inited); }
 
 	updateAnonToken(): void {
 		this.callArgs.token = environment.anon_token;
@@ -105,9 +105,9 @@ export class AppComponent implements OnInit {
 				.pipe(
 					catchError((err) => {
 						if (err instanceof CloseEvent) {
-							this.output.push({ type: 'text', value: 'Connection Closed.' });
+							this.pushOutput({ type: 'text', value: 'Connection Closed.' });
 						} else {
-							this.output.push({ type: 'json', value: err });
+							this.pushOutput({ type: 'json', value: err });
 						}
 						return throwError(err);
 					}),
@@ -117,20 +117,18 @@ export class AppComponent implements OnInit {
 					if (res.args.code == 'CORE_CONN_OK') {
 						this.showInit = false;
 					}
-					this.output.push({ type: 'json', value: res });
-
-					document.querySelector('#output-console > button').scrollIntoView();
+					this.pushOutput({ type: 'json', value: res })
 				}, (err) => {
 					if (err instanceof CloseEvent) {
-						this.output.push({ type: 'text', value: 'Connection Closed.' });
+						this.pushOutput({ type: 'text', value: 'Connection Closed.' });
 					} else {
-						this.output.push({ type: 'json', value: err });
+						this.pushOutput({ type: 'json', value: err });
 					}
 				}, () => {
 					console.log('complete');
 				});
 		} catch (err) {
-			this.output.push({ type: 'text', value: err });
+			this.pushOutput({ type: 'text', value: err });
 		}
 
 		this.api.authed$.subscribe((session: Session) => {
@@ -150,13 +148,13 @@ export class AppComponent implements OnInit {
 	auth(): void {
 		try {
 			this.logCall(`api.auth(${this.authVars.var}, ${this.authVars.val}, ${this.authVars.password})`);
-			this.api.auth(this.authVars.var, this.authVars.val, this.authVars.password).subscribe((res: Res<Doc>) => {
+			this.api.auth(this.authVars.var, this.authVars.val, '********').subscribe((res: Res<Doc>) => {
 
 			}, (err) => {
-				this.output.push({ type: 'json', value: err });
+				this.pushOutput({ type: 'json', value: err });
 			});
 		} catch (err) {
-			this.output.push({ type: 'text', value: err });
+			this.pushOutput({ type: 'text', value: err });
 		}
 	}
 
@@ -166,7 +164,7 @@ export class AppComponent implements OnInit {
 			.subscribe((res: Res<Doc>) => {
 
 			}, (err: Res<Doc>) => {
-				this.output.push({ type: 'json', value: err });
+				this.pushOutput({ type: 'json', value: err });
 			});
 	}
 
@@ -186,10 +184,10 @@ export class AppComponent implements OnInit {
 				this.updateFiles(obj[attr], i);
 			} else {
 				if (obj[attr] == '__file__') {
-					this.output.push({ type: 'text', value: `Replacing __file__ attr in doc with file#${i}` });
+					this.pushOutput({ type: 'text', value: `Replacing __file__ attr in doc with file#${i}` });
 					obj[attr] = this.docFiles[i];
 					if (!obj[attr]) {
-						this.output.push({ type: 'text', value: `File#${i} is null value. Stopping.` });
+						this.pushOutput({ type: 'text', value: `File#${i} is null value. Stopping.` });
 						throw Error('No file value');
 					}
 					i += 1;
@@ -221,12 +219,19 @@ export class AppComponent implements OnInit {
 				// this.output += JSON.stringify(err) + '\n';
 			});
 		} catch (err) {
-			this.output.push({ type: 'json', value: err });
+			this.pushOutput({ type: 'json', value: err });
 		}
 	}
 
 	logCall(call: string): void {
-		this.output.push({ type: 'text', value: `Pushing call:\n${call}` });
+		this.pushOutput({ type: 'text', value: `Pushing call:\n${call}` });
+	}
+
+	pushOutput({ type, value }: { type: 'json' | 'text'; value: any; }): void {
+		this.output.push({ time: new Date(), type: type, value: value });
+		setTimeout(() => {
+			document.querySelector('.console-separator:last-child').scrollIntoView();
+		}, 50);
 	}
 
 }

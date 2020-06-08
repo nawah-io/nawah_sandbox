@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "limp-sandbox": {
+    "nawah-sandbox": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -14,7 +14,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "aot": true,
-            "outputPath": "dist/limp-sandbox",
+            "outputPath": "dist/nawah-sandbox",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -59,18 +59,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "limp-sandbox:build"
+            "browserTarget": "nawah-sandbox:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "limp-sandbox:build:production"
+              "browserTarget": "nawah-sandbox:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "limp-sandbox:build"
+            "browserTarget": "nawah-sandbox:build"
           }
         },
         "test": {
@@ -104,7 +104,7 @@
         }
       }
     },
-    "limp-sandbox-e2e": {
+    "nawah-sandbox-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "architect": {
@@ -112,11 +112,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "limp-sandbox:serve"
+            "devServerTarget": "nawah-sandbox:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "limp-sandbox:serve:production"
+              "devServerTarget": "nawah-sandbox:serve:production"
             }
           }
         },
@@ -132,5 +132,5 @@
       }
     }
   },
-  "defaultProject": "limp-sandbox"
+  "defaultProject": "nawah-sandbox"
 }
