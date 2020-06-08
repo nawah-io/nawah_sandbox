@@ -147,8 +147,8 @@ export class AppComponent implements OnInit {
 
 	auth(): void {
 		try {
-			this.logCall(`api.auth(${this.authVars.var}, ${this.authVars.val}, ${this.authVars.password})`);
-			this.api.auth(this.authVars.var, this.authVars.val, '********').subscribe((res: Res<Doc>) => {
+			this.logCall(`api.auth(${this.authVars.var}, ${this.authVars.val}, ********)`);
+			this.api.auth(this.authVars.var, this.authVars.val, this.authVars.password).subscribe((res: Res<Doc>) => {
 
 			}, (err) => {
 				this.pushOutput({ type: 'json', value: err });
