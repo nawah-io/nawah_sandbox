@@ -84,7 +84,7 @@ export class AppComponent implements OnInit {
 		this.editorOptionsDoc.statusBar = false;
 	}
 
-	ngOnInit() {console.log(this.api.inited); }
+	ngOnInit() { console.log(this.api.inited); }
 
 	updateAnonToken(): void {
 		this.callArgs.token = environment.anon_token;
@@ -160,12 +160,16 @@ export class AppComponent implements OnInit {
 
 	checkAuth(): void {
 		this.logCall('api.checkAuth()');
-		this.api.checkAuth()
-			.subscribe((res: Res<Doc>) => {
+		try {
+			this.api.checkAuth()
+				.subscribe((res: Res<Doc>) => {
 
-			}, (err: Res<Doc>) => {
-				this.pushOutput({ type: 'json', value: err });
-			});
+				}, (err: Res<Doc>) => {
+					this.pushOutput({ type: 'json', value: err });
+				});
+		} catch (err) {
+			this.pushOutput({ type: 'text', value: err });
+		}
 	}
 
 	signout(): void {
