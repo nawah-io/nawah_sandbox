@@ -322,7 +322,7 @@ Apache-2.0
 jsrsasign
 MIT
 
-ng-limp
+ng-nawah
 SEE LICENSE IN LICENSE
 
 ngx-cookie-service

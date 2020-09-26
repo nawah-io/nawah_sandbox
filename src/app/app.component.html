@@ -1,127 +1,137 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="./">Nawah Sandbox</a>
-  <div class="ml-auto">
-    <a class="btn mx-2" [class.btn-warning]="!api.inited" [class.btn-success]="api.inited">initd: {{api.inited == true}}</a>
-    <a class="btn" [class.btn-warning]="!api.authed" [class.btn-success]="api.authed">authd: {{api.authed == true}}</a>
-  </div>
+	<a class="navbar-brand" href="./">Nawah Sandbox</a>
+	<div class="ml-auto">
+		<a class="btn mx-2" [class.btn-warning]="!nawah.inited" [class.btn-success]="nawah.inited">inited:
+			{{nawah.inited == true}}</a>
+		<a class="btn" [class.btn-warning]="!nawah.authed" [class.btn-success]="nawah.authed">authed:
+			{{nawah.authed == true}}</a>
+	</div>
 </nav>
 
 <div class="container mt-2" style="height: calc(100vh - 60px); overflow: hidden;">
-  <div class="row mb-2">
-    <div class="col">
-      <ul ngbNav #toolsNav="ngbNav" [(activeId)]="toolsTabsActive" class="nav-tabs">
-        <li [ngbNavItem]="1">
-          <a ngbNavLink>Init</a>
-          <ng-template ngbNavContent>
-            <dl class="row">
-              <dt class="col-3 d-flex">API URI</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="SDKConfig.api"></dd>
-              <dt class="col-3">API Anon Token</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="SDKConfig.anonToken"
-                  (change)="updateAnonToken()"></dd>
-              <dt class="col-3">API Auth Attrs</dt>
-              <dd class="col-9"><input type="text" class="form-control" (change)="updateAuthAttrs($event)"></dd>
-              <dd class="col-2">
-                <button class="btn btn-light" (click)="init()">init()</button>
-              </dd>
-              <dd class="col-1"></dd>
-              <dd class="col-4">
-                <small>Separate attrs with single spaces only</small>
-              </dd>
-            </dl>
-          </ng-template>
-        </li>
-        <li [ngbNavItem]="2">
-          <a ngbNavLink>Auth</a>
-          <ng-template ngbNavContent>
-            <dl class="row">
-              <dt class="col-3">Auth Var</dt>
-              <dd class="col-9">
-                <select class="form-control" [(ngModel)]="authVars.var">
-                  <option *ngFor="let authVar of SDKConfig.authAttrs" [value]="authVar">{{authVar}}
-                  </option>
-                </select>
-              </dd>
-              <dt class="col-3">Auth Val</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="authVars.val"></dd>
-              <dt class="col-3">Password</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="authVars.password"></dd>
-              <dd class="col">
-                <button class="btn btn-light" (click)="auth()">auth()</button>
-                <button class="btn btn-light mx-2" (click)="checkAuth()">checkAuth()</button>
-                <button class="btn btn-light mx-2" (click)="signout()">signout()</button>
-              </dd>
-            </dl>
-          </ng-template>
-        </li>
-        <li [ngbNavItem]="3">
-          <a ngbNavLink>Call</a>
-          <ng-template ngbNavContent>
-            <dl class="row">
-              <dt class="col-3">Endpoint</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.endpoint"></dd>
-              <dt class="col-3">SID</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.sid"></dd>
-              <dt class="col-3">Token</dt>
-              <dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.token"></dd>
-              <dd class="col-12">
-                  <ul ngbNav #callNav="ngbNav" [(activeId)]="callTabsActive" class="nav-tabs">
-                    <li [ngbNavItem]="1">
-                      <a ngbNavLink>Query</a>
-                      <ng-template ngbNavContent>
-                        <json-editor [options]="editorOptionsQuery" [(ngModel)]="callArgs.query"></json-editor>
-                      </ng-template>
-                    </li>
-                    <li [ngbNavItem]="2">
-                      <a ngbNavLink>Doc</a>
-                      <ng-template ngbNavContent>
-                        <json-editor [options]="editorOptionsDoc" [(ngModel)]="callArgs.doc" (change)="updateDocFiles()">
-                        </json-editor>
-                        <small><br>Doc attrs with "__file__" will generate file input, resets with every change to Doc
-                          object.</small>
-                        <fieldset *ngFor="let file of docFiles; let i = index">
-                          <label>File: {{ i }}</label>
-                          <input type="file" (change)="docFiles[i] = $event.target.files">
-                        </fieldset>
-                      </ng-template>
-                    </li>
-                  </ul>
-                  <div [ngbNavOutlet]="callNav" class="mt-2"></div>
-              </dd>
-              <dd class="col-3">
-                <button class="btn btn-light" (click)="call()">call()</button>
-              </dd>
-            </dl>
-          </ng-template>
-        </li>
-        <li [ngbNavItem]="0" class="ml-auto">
-          <a class="btn btn-info" ngbNavLink>Hide</a>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="toolsNav" class="mt-2"></div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <ul ngbNav #ConsoleNav="ngbNav" [(activeId)]="consoleTabsActive" class="nav-tabs">
-        <li [ngbNavItem]="1">
-          <a ngbNavLink>Console</a>
-          <ng-template ngbNavContent>
-            <ng-container *ngFor="let item of output">
-              <small>{{item.time}}</small>
-              <pre *ngIf="item.type == 'text'" style="white-space: pre-line; word-break: break-all;">
+	<div class="row mb-2">
+		<div class="col">
+			<ul ngbNav #toolsNav="ngbNav" [(activeId)]="toolsTabsActive" class="nav-tabs">
+				<li [ngbNavItem]="1">
+					<a ngbNavLink>Init</a>
+					<ng-template ngbNavContent>
+						<dl class="row">
+							<dt class="col-3 d-flex">API URI</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="SDKConfig.api"></dd>
+							<dt class="col-3">API Anon Token</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="SDKConfig.anonToken"
+									(change)="updateAnonToken()"></dd>
+							<dt class="col-3">API Auth Attrs</dt>
+							<dd class="col-9"><input type="text" class="form-control"
+									(change)="updateAuthAttrs($event)"></dd>
+							<dd class="col-2">
+								<button class="btn btn-light" (click)="init()">init()</button>
+							</dd>
+							<dd class="col-1"></dd>
+							<dd class="col-4">
+								<small>Separate attrs with single spaces only</small>
+							</dd>
+						</dl>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="2">
+					<a ngbNavLink>Auth</a>
+					<ng-template ngbNavContent>
+						<dl class="row">
+							<dt class="col-3">Auth Var</dt>
+							<dd class="col-9">
+								<select class="form-control" [(ngModel)]="authVars.var">
+									<option *ngFor="let authVar of SDKConfig.authAttrs" [value]="authVar">{{authVar}}
+									</option>
+								</select>
+							</dd>
+							<dt class="col-3">Auth Val</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="authVars.val"></dd>
+							<dt class="col-3">Password</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="authVars.password">
+							</dd>
+							<dd class="col">
+								<button class="btn btn-light" (click)="auth()">auth()</button>
+								<button class="btn btn-light mx-2" (click)="checkAuth()">checkAuth()</button>
+								<button class="btn btn-light mx-2" (click)="signout()">signout()</button>
+							</dd>
+						</dl>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="3">
+					<a ngbNavLink>Call</a>
+					<ng-template ngbNavContent>
+						<dl class="row">
+							<dt class="col-3">Endpoint</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.endpoint">
+							</dd>
+							<dt class="col-3">SID</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.sid"></dd>
+							<dt class="col-3">Token</dt>
+							<dd class="col-9"><input type="text" class="form-control" [(ngModel)]="callArgs.token"></dd>
+							<dd class="col-12">
+								<ul ngbNav #callNav="ngbNav" [(activeId)]="callTabsActive" class="nav-tabs">
+									<li [ngbNavItem]="1">
+										<a ngbNavLink>Query</a>
+										<ng-template ngbNavContent>
+											<json-editor [options]="editorOptionsQuery" [(ngModel)]="callArgs.query">
+											</json-editor>
+										</ng-template>
+									</li>
+									<li [ngbNavItem]="2">
+										<a ngbNavLink>Doc</a>
+										<ng-template ngbNavContent>
+											<json-editor [options]="editorOptionsDoc" [(ngModel)]="callArgs.doc"
+												(change)="updateDocFiles()">
+											</json-editor>
+											<small><br>Doc attrs with "__file__" will generate file input, resets with
+												every change to Doc
+												object.</small>
+											<fieldset *ngFor="let file of docFiles; let i = index">
+												<label>File: {{ i }}</label>
+												<input type="file" (change)="docFiles[i] = $event.target.files">
+											</fieldset>
+										</ng-template>
+									</li>
+								</ul>
+								<div [ngbNavOutlet]="callNav" class="mt-2"></div>
+							</dd>
+							<dd class="col-3">
+								<button class="btn btn-light" (click)="call()">call()</button>
+							</dd>
+						</dl>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="0" class="ml-auto">
+					<a class="btn btn-info" ngbNavLink>Hide</a>
+				</li>
+			</ul>
+			<div [ngbNavOutlet]="toolsNav" class="mt-2"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<ul ngbNav #ConsoleNav="ngbNav" [(activeId)]="consoleTabsActive" class="nav-tabs">
+				<li [ngbNavItem]="1">
+					<a ngbNavLink>Console</a>
+					<ng-template ngbNavContent>
+						<ng-container *ngFor="let item of output">
+							<small>{{item.time}}</small>
+							<pre *ngIf="item.type == 'text'" style="white-space: pre-line; word-break: break-all;">
                 {{ item.value }}
               </pre>
-              <json-editor *ngIf="item.type == 'json'" [options]="editorOptionsView" [data]="item.value"></json-editor>
-              <hr class="console-separator">
-            </ng-container>
-          </ng-template>
-        </li>
-        <li ngbNavItem class="ml-auto">
-          <button class="btn btn-danger" (click)="output = []">Clear</button>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="ConsoleNav" class="mt-2" style="overflow-y: scroll;" [style.maxHeight]="70-(toolsTabsActive*10) + 'vh'"></div>
-    </div>
-  </div>
+							<json-editor *ngIf="item.type == 'json'" [options]="editorOptionsView" [data]="item.value">
+							</json-editor>
+							<hr class="console-separator">
+						</ng-container>
+					</ng-template>
+				</li>
+				<li ngbNavItem class="ml-auto">
+					<button class="btn btn-danger" (click)="output = []">Clear</button>
+				</li>
+			</ul>
+			<div [ngbNavOutlet]="ConsoleNav" class="mt-2" style="overflow-y: scroll;"
+				[style.maxHeight]="70-(toolsTabsActive*10) + 'vh'"></div>
+		</div>
+	</div>
 </div>
