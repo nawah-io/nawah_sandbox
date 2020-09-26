@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
 	ngOnInit() { console.log(this.nawah.inited); }
 
 	updateAnonToken(): void {
-		this.callArgs.token = environment.anon_token;
+		this.callArgs.token = this.SDKConfig.anonToken;
 	}
 
 	updateAuthAttrs($event: Event): void {
