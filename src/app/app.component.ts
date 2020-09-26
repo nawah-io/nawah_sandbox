@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-
+import { JsonEditorOptions } from 'ang-jsoneditor';
+import { Doc, NawahService, Query, Res, SDKConfig, Session } from 'ng-nawah';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-import { JsonEditorOptions } from 'ang-jsoneditor';
-
-import { ApiService, Res, Doc, Query, Session, SDKConfig } from 'ng-limp';
-
 import { environment } from 'src/environments/environment';
 
 
@@ -69,7 +64,7 @@ export class AppComponent implements OnInit {
 
 	output: Array<{ time: Date; type: 'text' | 'json'; value: any; }> = [];
 
-	constructor(public api: ApiService) {
+	constructor(public nawah: NawahService) {
 		this.editorOptionsView = new JsonEditorOptions()
 		this.editorOptionsView.modes = ['code', 'view'];
 		this.editorOptionsView.mode = 'view';
@@ -84,7 +79,7 @@ export class AppComponent implements OnInit {
 		this.editorOptionsDoc.statusBar = false;
 	}
 
-	ngOnInit() { console.log(this.api.inited); }
+	ngOnInit() { console.log(this.nawah.inited); }
 
 	updateAnonToken(): void {
 		this.callArgs.token = environment.anon_token;
@@ -101,7 +96,7 @@ export class AppComponent implements OnInit {
 	init(): void {
 		this.showAuth = true;
 		try {
-			this.api.init(this.SDKConfig)
+			this.nawah.init(this.SDKConfig)
 				.pipe(
 					catchError((err) => {
 						if (err instanceof CloseEvent) {
@@ -131,7 +126,7 @@ export class AppComponent implements OnInit {
 			this.pushOutput({ type: 'text', value: err });
 		}
 
-		this.api.authed$.subscribe((session: Session) => {
+		this.nawah.authed$.subscribe((session: Session) => {
 			if (session) {
 				this.showAuth = this.guardOn = false;
 				this.authVars.auth = session;
@@ -148,7 +143,7 @@ export class AppComponent implements OnInit {
 	auth(): void {
 		try {
 			this.logCall(`api.auth(${this.authVars.var}, ${this.authVars.val}, ********)`);
-			this.api.auth(this.authVars.var, this.authVars.val, this.authVars.password).subscribe((res: Res<Doc>) => {
+			this.nawah.auth(this.authVars.var, this.authVars.val, this.authVars.password).subscribe((res: Res<Doc>) => {
 
 			}, (err) => {
 				this.pushOutput({ type: 'json', value: err });
@@ -161,7 +156,7 @@ export class AppComponent implements OnInit {
 	checkAuth(): void {
 		this.logCall('api.checkAuth()');
 		try {
-			this.api.checkAuth()
+			this.nawah.checkAuth()
 				.subscribe((res: Res<Doc>) => {
 
 				}, (err: Res<Doc>) => {
@@ -174,7 +169,7 @@ export class AppComponent implements OnInit {
 
 	signout(): void {
 		this.logCall('api.signout()');
-		this.api.signout().subscribe();
+		this.nawah.signout().subscribe();
 	}
 
 	updateFiles(obj: any, i: number = 0): void {
@@ -211,7 +206,7 @@ export class AppComponent implements OnInit {
 			console.log('after files:', doc);
 
 			this.logCall(`api.call(${this.callArgs.endpoint}, {query:${JSON.stringify(query)}, doc:${JSON.stringify(doc)}})`);
-			this.api.call({
+			this.nawah.call({
 				endpoint: this.callArgs.endpoint,
 				sid: this.callArgs.sid,
 				token: this.callArgs.token,
