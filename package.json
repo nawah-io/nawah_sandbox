@@ -27,7 +27,7 @@
 		"crypto-js": "^4.0.0",
 		"file-saver": "^2.0.2",
 		"jsoneditor": "^8.6.8",
-		"jsrsasign": "^8.0.24",
+		"jsrsasign": "^10.2.0",
 		"ng-nawah": "^1.0.0",
 		"rxjs": "^6.6.3",
 		"tslib": "^2.0.0",
